@@ -1,0 +1,135 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,
+time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+body { line-height: 1; }
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+table { border-collapse: collapse; border-spacing: 0; }
+.right { float: right; }
+.left { float: left; }
+.clear { clear: both; }
+
+body {
+    font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    text-align: center;
+    background: #F5F5F5;
+}
+h1 {
+    font-size: 3em;
+    margin-top: 10vh;
+}
+h1>span {
+    line-height: 65px;
+    vertical-align: top;
+    font-weight: 200;
+}
+h2 {
+    font-size: 2em;
+    font-weight: 100;
+    margin: 1em;
+}
+hr {
+    margin: 1.5em 0;
+    height: 1px;
+    background: #e3e3e3;
+    border: none;
+}
+.logo {
+    width: 64px;
+    height: 64px;
+}
+.buttons-col {
+    display: inline-block;
+    vertical-align: top;
+}
+.btn {
+    appearance: none;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: .6em 1.4em;
+    margin: 1em 1em .4em;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    outline: none;
+    min-width: 80px;
+    border-radius: 2px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    background: #528BFF;
+    border: 1px solid #4A86FF;
+    color: #fafafa;
+}
+.btn.btn-large {
+    width: 180px;
+}
+.btn:hover {
+    background: #4B85FA;
+    border-color: #417EFA;
+    color: #fefefe;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .05);
+}
+.btn:active {
+    background: #467EF0;
+    border-color: #437FF7;
+    color: #fff;
+}
+.btn-desc {
+    font-size: .8rem;
+    margin-top: .5em;
+    font-weight: 100;
+}
+.btn-sub-link {
+    text-decoration: none;
+    color: #ccc;
+    font-size: .8rem;
+    display: block;
+    transition: color 100ms ease-out;
+}
+.btn-sub-link:hover {
+    color: #528BFF;
+    transition: color 100ms ease-in;
+}
+.screenshots {
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+.screenshot {
+    width: 850px;
+    height: 576px;
+}
+.scr-arrow {
+    vertical-align: top;
+    margin-top: 20px;
+    cursor: pointer;
+    height: 300px;
+    padding-top: 100px;
+}
+.scr-arrow:before {
+    font-size: 4em;
+    color: #ccc;
+}
+.scr-arrow:hover:before {
+    color: #528BFF;
+}
+.footer {
+    color: #ccc;
+    font-size: .8em;
+    font-weight: 300;
+    margin: 0 2em 2em;
+}
+.footer a {
+    color: #ccc;
+    text-decoration: none;
+}
+.footer a:hover {
+    color: #528BFF;
+}
