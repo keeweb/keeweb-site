@@ -130,6 +130,9 @@ hr {
     color: #ccc;
     text-decoration: none;
 }
+.footer a ~ a {
+    margin-left: 2em;
+}
 .footer a:hover {
     color: #528BFF;
 }
