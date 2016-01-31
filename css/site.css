@@ -15,9 +15,10 @@ table { border-collapse: collapse; border-spacing: 0; }
 .clear { clear: both; }
 
 body {
-    font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: "Lato", -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
     text-align: center;
     background: #F5F5F5;
+    font-weight: 300;
 }
 h1 {
     font-size: 3em;
@@ -26,7 +27,6 @@ h1 {
 h1>span {
     line-height: 65px;
     vertical-align: top;
-    font-weight: 200;
 }
 h2 {
     font-size: 2em;
@@ -164,7 +164,6 @@ hr {
 .footer {
     color: #ccc;
     font-size: .8em;
-    font-weight: 300;
     margin: 0 2em 2em;
 }
 .footer a {
