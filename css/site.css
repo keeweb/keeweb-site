@@ -171,7 +171,7 @@ hr {
     text-decoration: none;
 }
 .footer a ~ a {
-    margin-left: 2em;
+    margin-left: 1.5em;
 }
 .footer a:hover {
     color: #528BFF;
