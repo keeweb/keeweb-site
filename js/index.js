@@ -4,7 +4,18 @@ var screenshots = ['scr1', 'scr2', 'scr3', 'scr4'];
 
 document.addEventListener('DOMContentLoaded', function() {
     initDownload();
+    setImages();
 });
+
+function setImages() {
+    var odd = false;
+    each('.feature>img', function(el) {
+        if (odd) {
+            el.parentNode.insertBefore(el, el.parentNode.firstChild);
+        }
+        odd = !odd;
+    });
+}
 
 function initDownload() {
     var os = detectOs();
@@ -21,7 +32,10 @@ function detectOs() {
     if (platform.indexOf('linux') >= 0) {
         return 'linux';
     }
-    return 'win32';
+    if (platform.indexOf('win') >= 0) {
+        return 'win32';
+    }
+    return undefined;
 }
 
 function setDownloadButton(os) {
@@ -42,6 +56,9 @@ function setDownloadButtonTitle(os) {
                 el.innerHTML = '<i class="fa fa-linux"></i> for Linux';
                 break;
         }
+    });
+    each('.btn-sub-link', function(el) {
+        el.style.display = 'block';
     });
 }
 
