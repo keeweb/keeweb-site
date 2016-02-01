@@ -15,7 +15,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 .clear { clear: both; }
 
 body {
-    font-family: "Lato", -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: -apple-system, "BlinkMacSystemFont", "Raleway", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     text-align: center;
     background: #F5F5F5;
     font-weight: 300;
