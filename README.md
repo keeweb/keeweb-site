@@ -1,8 +1,8 @@
 # Promo website for KeeWeb app  
 
-This repo is for promo website for [KeeWeb](https://github.com/antelle/keeweb).  
+This repo is for promo website for [KeeWeb](https://keeweb.info).  
 App repo: https://github.com/antelle/keeweb  
-The app itself: https://antelle.github.io/keeweb/  
+The app itself: https://app.keeweb.info/  
 
 ## Issues
 
