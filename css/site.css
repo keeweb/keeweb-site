@@ -105,12 +105,23 @@ hr {
     white-space: nowrap;
     -webkit-user-select: none;
     -moz-user-select: none;
+    position: relative;
 }
 .screenshot {
     width: 850px;
     max-width: 80vw;
     position: relative;
     vertical-align: middle;
+}
+.screenshot-loader.fa {
+    width: 200px;
+    position:absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin: -70px auto 0 auto;
+    font-size: 120px;
+    color: rgba(128, 128, 128, .05);
 }
 .scr-arrow {
     vertical-align: middle;

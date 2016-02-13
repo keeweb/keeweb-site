@@ -38,8 +38,9 @@
 <hr/>
 <div class="screenshots">
     <i class="fa fa-angle-left scr-arrow" onclick="rotateScreenshot(false);"></i>
-    <img src="img/scr1.png" class="screenshot" id="scr-large" />
+    <img src="img/scr1.png" class="screenshot" id="scr-large" onload="screenshotLoaded();" />
     <i class="fa fa-angle-right scr-arrow" onclick="rotateScreenshot(true)"></i>
+    <i class="fa fa-spinner fa-spin screenshot-loader"></i>
 </div>
 <hr id="features"/>
 <div class="feature" id="feature-desktop">

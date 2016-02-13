@@ -94,6 +94,15 @@ function rotateScreenshot(next) {
     ix = (ix + screenshots.length + (next ? 1 : -1)) % screenshots.length;
     src = src.replace(pic, screenshots[ix]);
     el.setAttribute('src', src);
+    each('.screenshot-loader', function(el) {
+        el.style.display = 'inline-block';
+    });
+}
+
+function screenshotLoaded() {
+    each('.screenshot-loader', function(el) {
+        el.style.display = 'none';
+    });
 }
 
 function each(sel, fn) {
