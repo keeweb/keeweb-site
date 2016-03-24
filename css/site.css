@@ -33,6 +33,11 @@ h2 {
     font-weight: 100;
     margin: 1em;
 }
+h3 {
+    font-size: 1.5em;
+    font-weight: 100;
+    margin-bottom: 1em;
+}
 hr {
     margin: 1.5em 0;
     height: 1px;
@@ -172,10 +177,14 @@ hr {
         margin: .5em 1em;
     }
 }
+.img-ext {
+    width: 250px;
+    opacity: .9;
+}
 .footer {
     color: #ccc;
     font-size: .8em;
-    margin: 0 2em 2em;
+    margin: 2em;
 }
 .footer a {
     color: #ccc;
