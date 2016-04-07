@@ -73,9 +73,14 @@ function setLatestReleaseUrl(os) {
 }
 
 function releasesLoaded(releaseInfo, os) {
+    var knownAssets = [
+        'KeeWeb.linux.x64.zip',
+        'KeeWeb.mac.dmg',
+        'KeeWeb.win32.exe'
+    ];
     var url;
     releaseInfo.assets.forEach(function(asset) {
-        if (asset.name.indexOf(os) > 0) {
+        if (asset.name.indexOf(os) > 0 && knownAssets.indexOf(asset.name) >= 0) {
             url = asset.browser_download_url;
         }
     });
