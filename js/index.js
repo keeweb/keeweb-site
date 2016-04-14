@@ -74,7 +74,7 @@ function setLatestReleaseUrl(os) {
 
 function releasesLoaded(releaseInfo, os) {
     var knownAssets = [
-        'KeeWeb.linux.x64.zip',
+        'KeeWeb.linux.x64.deb',
         'KeeWeb.mac.dmg',
         'KeeWeb.win32.exe'
     ];
