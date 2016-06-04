@@ -68,7 +68,7 @@ function setLatestReleaseUrl(os) {
     xhr.addEventListener('load', function() {
         releasesLoaded(xhr.response, os)
     });
-    xhr.open('GET', 'https://api.github.com/repos/antelle/keeweb/releases/latest');
+    xhr.open('GET', 'https://api.github.com/repos/keeweb/keeweb/releases/latest');
     xhr.send();
 }
 
