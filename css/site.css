@@ -197,3 +197,11 @@ hr {
 .footer a:hover {
     color: #528BFF;
 }
+
+.text-block>p {
+    margin: 0 auto;
+    padding: 0 1em 1em;
+    line-height: 1.5em;
+    max-width: 600px;
+    text-align: left;
+}
