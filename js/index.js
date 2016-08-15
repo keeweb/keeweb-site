@@ -33,7 +33,11 @@ function detectOs() {
         return 'linux';
     }
     if (platform.indexOf('win') >= 0) {
-        return 'win32';
+        if (navigator.userAgent.indexOf("WOW64") != -1 || navigator.userAgent.indexOf("Win64") != -1) {
+            return 'win.x64';
+        } else {
+            return 'win.ia32';
+        }
     }
     return undefined;
 }
@@ -49,7 +53,8 @@ function setDownloadButtonTitle(os) {
             case 'mac':
                 el.innerHTML = '<i class="fa fa-apple"></i> for Mac OS X';
                 break;
-            case 'win32':
+            case 'win.ia32':
+            case 'win.x64':
                 el.innerHTML = '<i class="fa fa-windows"></i> for Windows';
                 break;
             case 'linux':
@@ -73,16 +78,28 @@ function setLatestReleaseUrl(os) {
 }
 
 function releasesLoaded(releaseInfo, os) {
-    var knownAssets = [
-        'KeeWeb.linux.x64.deb',
-        'KeeWeb.mac.dmg',
-        'KeeWeb.win32.exe'
-    ];
+    var assetNameParts;
+    switch (os) {
+        case 'mac':
+            assetNameParts = ['mac.dmg'];
+            break;
+        case 'win.ia32':
+            assetNameParts = ['win.ia32.exe', 'win32.exe'];
+            break;
+        case 'win.x64':
+            assetNameParts = ['win.x64.exe', 'win32.exe'];
+            break;
+        case 'linux':
+            assetNameParts = ['linux.x64.deb'];
+            break;
+    }
     var url;
     releaseInfo.assets.forEach(function(asset) {
-        if (asset.name.indexOf(os) > 0 && knownAssets.indexOf(asset.name) >= 0) {
-            url = asset.browser_download_url;
-        }
+        assetNameParts.forEach(function(part) {
+            if (asset.name.indexOf(part) >= 0) {
+                url = asset.browser_download_url;
+            }
+        });
     });
     if (url) {
         each('.btn-download', function(el) {
