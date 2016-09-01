@@ -78,28 +78,26 @@ function setLatestReleaseUrl(os) {
 }
 
 function releasesLoaded(releaseInfo, os) {
-    var assetNameParts;
+    var assetNamePart;
     switch (os) {
         case 'mac':
-            assetNameParts = ['mac.dmg'];
+            assetNamePart = 'mac.dmg';
             break;
         case 'win.ia32':
-            assetNameParts = ['win.ia32.exe', 'win32.exe'];
+            assetNamePart = 'win.ia32.exe';
             break;
         case 'win.x64':
-            assetNameParts = ['win.x64.exe', 'win32.exe'];
+            assetNamePart = 'win.x64.exe';
             break;
         case 'linux':
-            assetNameParts = ['linux.x64.deb'];
+            assetNamePart = 'linux.x64.deb';
             break;
     }
     var url;
     releaseInfo.assets.forEach(function(asset) {
-        assetNameParts.forEach(function(part) {
-            if (asset.name.indexOf(part) >= 0) {
-                url = asset.browser_download_url;
-            }
-        });
+        if (asset.name.indexOf(assetNamePart) >= 0) {
+            url = asset.browser_download_url;
+        }
     });
     if (url) {
         each('.btn-download', function(el) {
