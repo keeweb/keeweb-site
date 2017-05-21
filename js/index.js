@@ -51,7 +51,7 @@ function setDownloadButtonTitle(os) {
     each('.btn-download>.btn-desc', function(el) {
         switch (os) {
             case 'mac':
-                el.innerHTML = '<i class="fa fa-apple"></i> for Mac OS X';
+                el.innerHTML = '<i class="fa fa-apple"></i> for macOS';
                 break;
             case 'win.ia32':
             case 'win.x64':
