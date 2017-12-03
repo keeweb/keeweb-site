@@ -205,3 +205,6 @@ hr {
     max-width: 600px;
     text-align: left;
 }
+.btn-donate {
+    width: 105px;
+}
