@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KdbxToXml</title>
+    <style>
+        body {
+            font-family: -apple-system, "BlinkMacSystemFont", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;;
+            font-size: 14px;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<h1>KdbxToXml</h1>
+<p>Never upload your KDBX with passwords to untrusted sources! This page does everything in your browser,
+    however don't blindly believe if other pages state they do the same.
+    Always check the domain before providing your passwords.</p>
+<input type="password" placeholder="password" id="pw" />
+<input type="file" id="fi" />
+<pre></pre>
+<script src="kdbxweb.min.js"></script>
+<script>
+    const xmlParseFromString = DOMParser.prototype.parseFromString;
+    DOMParser.prototype.parseFromString = function(xml, mime) {
+        document.querySelector('pre').innerText = xml;
+        return xmlParseFromString.call(this, xml, mime);
+    };
+    document.querySelector('#fi').addEventListener('change', e => {
+        const file = e.target.files[0];
+        const password = document.querySelector('#pw').value;
+        const reader = new FileReader();
+        const cred = new kdbxweb.Credentials(kdbxweb.ProtectedValue.fromString(password));
+        reader.onload = e => {
+            const data = e.target.result;
+            kdbxweb.Kdbx.load(data, cred).catch(e => alert('Error:\n' + e));
+        };
+        reader.readAsArrayBuffer(file);
+    });
+</script>
+</body>
+</html>
