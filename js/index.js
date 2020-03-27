@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
     setImages();
 });
 
+document.addEventListener('scroll', function() {
+    var height = window.innerHeight || document.documentElement.clientHeight;
+    each('.feature>img[data-src]', function(el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < height + 100) {
+            el.setAttribute('src', el.getAttribute('data-src'));
+            el.removeAttribute('data-src');
+        }
+    });
+}, { passive: true });
+
 function setImages() {
     var odd = false;
     each('.feature>img', function(el) {

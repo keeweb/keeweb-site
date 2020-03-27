@@ -114,10 +114,12 @@ hr {
     position: relative;
 }
 .screenshot {
-    width: 850px;
+    width: 740px;
     max-width: 80vw;
     position: relative;
     vertical-align: middle;
+    margin: 55px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
 }
 .screenshot-loader.fa {
     width: 200px;
@@ -161,9 +163,11 @@ hr {
 }
 .feature>img {
     width: 400px;
+    height: 190px;
     border-radius: 3px;
     box-shadow: 0 0 20px rgba(0, 0, 0, .2);
     margin: .5em 3em;
+    background: rgba(0, 0, 0, .2);
 }
 @media only screen and (max-width: 510px) {
     .feature {
@@ -175,6 +179,7 @@ hr {
     }
     .feature>img {
         width: 90vw;
+        height: auto;
         margin: .5em 1em;
     }
 }
