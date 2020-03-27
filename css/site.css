@@ -115,11 +115,17 @@ hr {
 }
 .screenshot {
     width: 740px;
-    max-width: 80vw;
+    max-width: 70vw;
     position: relative;
     vertical-align: middle;
     margin: 55px;
     box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
+}
+@media only screen and (max-width: 510px) {
+    .screenshot {
+        margin: 5vw;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    }
 }
 .screenshot-loader.fa {
     width: 200px;
