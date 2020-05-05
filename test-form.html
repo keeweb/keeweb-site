@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KeeWeb Test Form</title>
+    <style>
+        body {
+            font-family: -apple-system, "BlinkMacSystemFont", "Raleway", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+            font-feature-settings: "liga" 0;
+            background: #F5F5F5;
+            font-weight: 300;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: normal;
+        }
+
+        h2 {
+            font-weight: 300;
+        }
+
+        h3 {
+            font-weight: 300;
+        }
+
+        .form-row {
+            margin: 10px;
+        }
+
+        label {
+            width: 100px;
+            display: inline-block;
+        }
+
+        input[type=text], input[type=password] {
+            width: 200px;
+            font-size: 20px;
+            padding: 4px 8px;
+        }
+
+        input[type=submit] {
+            font-size: 20px;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>KeeWeb Test Form</h1>
+<p>You can use this form to test password auto-type in KeeWeb or any other application.
+Passwords submitted through this form are not sent anywhere.</p>
+
+<form action="test-form.html" method="post">
+    <p>
+        <label for="username">Username:</label>
+        <input type="text" autocomplete="username" name="username" id="username" />
+    </p>
+
+    <p>
+        <label for="password">Password:</label>
+        <input type="password" autocomplete="current-password" name="password" id="password" />
+    </p>
+
+    <p>
+        <input type="submit" value="Submit" />
+    </p>
+</form>
+
+<p id="result"></p>
+
+<script>
+    document.querySelector('#username').focus();
+
+    document.querySelector('form').addEventListener('submit', e => {
+        e.preventDefault();
+        document.querySelector('#result').innerText = 'Values that would be submitted: \n\n' +
+            'Username: ' + document.querySelector('#username').value + '\n' +
+            'Password: ' + document.querySelector('#password').value + '\n';
+
+        document.querySelector('form').reset();
+        document.querySelector('#username').focus();
+    });
+</script>
+
+</body>
+</html>
