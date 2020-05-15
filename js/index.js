@@ -43,12 +43,8 @@ function detectOs() {
     if (platform.indexOf('linux') >= 0) {
         return 'linux';
     }
-    if (platform.indexOf('win') >= 0) {
-        if (navigator.userAgent.indexOf("WOW64") != -1 || navigator.userAgent.indexOf("Win64") != -1) {
-            return 'win.x64';
-        } else {
-            return 'win.ia32';
-        }
+    if (platform.indexOf('win') >= 0 && /(WOW64|Win64)/.test(navigator.userAgent)) {
+        return 'win.x64';
     }
     return undefined;
 }
