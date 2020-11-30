@@ -2,25 +2,29 @@
 
 var screenshots = ['scr1', 'scr2', 'scr3', 'scr4'];
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initDownload();
     setImages();
 });
 
-document.addEventListener('scroll', function() {
-    var height = window.innerHeight || document.documentElement.clientHeight;
-    each('.feature>img[data-src]', function(el) {
-        var rect = el.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top < height + 100) {
-            el.setAttribute('src', el.getAttribute('data-src'));
-            el.removeAttribute('data-src');
-        }
-    });
-}, { passive: true });
+document.addEventListener(
+    'scroll',
+    function () {
+        var height = window.innerHeight || document.documentElement.clientHeight;
+        each('.feature>img[data-src]', function (el) {
+            var rect = el.getBoundingClientRect();
+            if (rect.bottom > 0 && rect.top < height + 100) {
+                el.setAttribute('src', el.getAttribute('data-src'));
+                el.removeAttribute('data-src');
+            }
+        });
+    },
+    { passive: true }
+);
 
 function setImages() {
     var odd = false;
-    each('.feature>img', function(el) {
+    each('.feature>img', function (el) {
         if (odd) {
             el.parentNode.insertBefore(el, el.parentNode.firstChild);
         }
@@ -38,7 +42,7 @@ function initDownload() {
 function detectOs() {
     var platform = navigator.platform.toLowerCase();
     if (platform.indexOf('mac') >= 0) {
-        return 'mac';
+        return navigator.platform === 'MacIntel' ? 'mac.x64' : 'mac.arm64';
     }
     if (platform.indexOf('linux') >= 0) {
         return 'linux';
@@ -55,7 +59,7 @@ function setDownloadButton(os) {
 }
 
 function setDownloadButtonTitle(os) {
-    each('.btn-download>.btn-desc', function(el) {
+    each('.btn-download>.btn-desc', function (el) {
         switch (os) {
             case 'mac':
                 el.innerHTML = '<i class="fa fa-apple"></i> for macOS';
@@ -69,7 +73,7 @@ function setDownloadButtonTitle(os) {
                 break;
         }
     });
-    each('.btn-sub-link', function(el) {
+    each('.btn-sub-link', function (el) {
         el.style.display = 'block';
     });
 }
@@ -77,8 +81,8 @@ function setDownloadButtonTitle(os) {
 function setLatestReleaseUrl(os) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.addEventListener('load', function() {
-        releasesLoaded(xhr.response, os)
+    xhr.addEventListener('load', function () {
+        releasesLoaded(xhr.response, os);
     });
     xhr.open('GET', 'https://api.github.com/repos/keeweb/keeweb/releases/latest');
     xhr.send();
@@ -87,8 +91,15 @@ function setLatestReleaseUrl(os) {
 function releasesLoaded(releaseInfo, os) {
     var assetNamePart;
     switch (os) {
-        case 'mac':
-            assetNamePart = 'mac.dmg';
+        case 'mac.x64':
+            assetNamePart = releaseInfo.assets.some((asset) => asset.name.endsWith('mac.dmg'))
+                ? 'mac.dmg'
+                : 'mac.x64.dmg';
+            break;
+        case 'mac.arm64':
+            assetNamePart = releaseInfo.assets.some((asset) => asset.name.endsWith('mac.dmg'))
+                ? 'mac.dmg'
+                : 'mac.arm64.dmg';
             break;
         case 'win.ia32':
             assetNamePart = 'win.ia32.exe';
@@ -101,13 +112,13 @@ function releasesLoaded(releaseInfo, os) {
             break;
     }
     var url;
-    releaseInfo.assets.forEach(function(asset) {
+    releaseInfo.assets.forEach(function (asset) {
         if (asset.name.indexOf(assetNamePart) >= 0) {
             url = asset.browser_download_url;
         }
     });
     if (url) {
-        each('.btn-download', function(el) {
+        each('.btn-download', function (el) {
             el.setAttribute('href', url);
         });
     }
@@ -121,13 +132,13 @@ function rotateScreenshot(next) {
     ix = (ix + screenshots.length + (next ? 1 : -1)) % screenshots.length;
     src = src.replace(pic, screenshots[ix]);
     el.setAttribute('src', src);
-    each('.screenshot-loader', function(el) {
+    each('.screenshot-loader', function (el) {
         el.style.display = 'inline-block';
     });
 }
 
 function screenshotLoaded() {
-    each('.screenshot-loader', function(el) {
+    each('.screenshot-loader', function (el) {
         el.style.display = 'none';
     });
 }
