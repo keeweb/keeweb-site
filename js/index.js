@@ -82,11 +82,34 @@ function setDownloadButtonTitle(os) {
 function setLatestReleaseUrl(os) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
+    xhr.addEventListener('error', function () {
+        showLastAvailableReleaseIfAny(os);
+    });
     xhr.addEventListener('load', function () {
-        releasesLoaded(xhr.response, os);
+        if (xhr.status === 200) {
+            releasesLoaded(xhr.response, os);
+            try {
+                localStorage.lastRelease = JSON.stringify({
+                    dt: Date.now(),
+                    releaseInfo: xhr.response
+                });
+            } catch (ex) {}
+        } else {
+            showLastAvailableReleaseIfAny(os);
+        }
     });
     xhr.open('GET', 'https://api.github.com/repos/keeweb/keeweb/releases/latest');
     xhr.send();
+}
+
+function showLastAvailableReleaseIfAny(os) {
+    if (localStorage && localStorage.lastRelease) {
+        var lastRelease = JSON.parse(localStorage.lastRelease);
+        var oneDayInMs = 24 * 60 * 60 * 1000;
+        if (lastRelease && Date.now() - lastRelease.dt < oneDayInMs) {
+            releasesLoaded(lastRelease.releaseInfo, os);
+        }
+    }
 }
 
 function releasesLoaded(releaseInfo, os) {
