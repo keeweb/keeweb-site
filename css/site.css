@@ -99,7 +99,7 @@ hr {
     transition: height 200ms ease-in;
 }
 .btn:hover ~ .download-extras, .download-extras:hover {
-    height: 30px;
+    height: 2rem;
 }
 .btn-desc {
     font-size: .8rem;
