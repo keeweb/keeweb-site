@@ -93,14 +93,10 @@ function releasesLoaded(releaseInfo, os) {
     var assetNamePart;
     switch (os) {
         case 'mac.x64':
-            assetNamePart = releaseInfo.assets.some((asset) => asset.name.endsWith('mac.dmg'))
-                ? 'mac.dmg'
-                : 'mac.x64.dmg';
+            assetNamePart = 'mac.x64.dmg';
             break;
         case 'mac.arm64':
-            assetNamePart = releaseInfo.assets.some((asset) => asset.name.endsWith('mac.dmg'))
-                ? 'mac.dmg'
-                : 'mac.arm64.dmg';
+            assetNamePart = 'mac.arm64.dmg';
             break;
         case 'win.ia32':
             assetNamePart = 'win.ia32.exe';
