@@ -60,7 +60,7 @@ hr {
     font-size: 1.2em;
     line-height: 1;
     padding: .6em 1.4em;
-    margin: 1em 1em .4em;
+    margin: 1em 1em 0;
     text-decoration: none;
     vertical-align: middle;
     white-space: nowrap;
@@ -73,7 +73,7 @@ hr {
     border: 1px solid #4A86FF;
     color: #fafafa;
 }
-.btn.btn-large {
+.btn.btn-large, .btn.btn-extra {
     width: 180px;
 }
 .btn:hover {
@@ -87,12 +87,32 @@ hr {
     border-color: #437FF7;
     color: #fff;
 }
+.btn-extra {
+    display: block;
+    margin-top: 1px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.download-extras {
+    height: 0;
+    overflow: hidden;
+    transition: height 200ms ease-in;
+}
+.btn:hover ~ .download-extras, .download-extras:hover {
+    height: 30px;
+}
 .btn-desc {
     font-size: .8rem;
     margin-top: .5em;
     font-weight: 100;
 }
+.btn-text {
+    font-size: .8rem;
+    padding: .6em 0;
+    font-weight: 100;
+}
 .btn-sub-link {
+    margin-top: .6em;
     text-decoration: none;
     color: #ccc;
     font-size: .8rem;

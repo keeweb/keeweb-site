@@ -117,8 +117,32 @@ function releasesLoaded(releaseInfo, os) {
     if (url) {
         each('.btn-download', function (el) {
             el.setAttribute('href', url);
+            if (os === 'mac.x64') {
+                var appleSiliconDownloadUrl = releaseInfo.assets.find(function (asset) {
+                    return asset.name.indexOf('.arm64.dmg') > 0;
+                });
+                if (appleSiliconDownloadUrl) {
+                    addAppleSiliconDownloadOption(el, appleSiliconDownloadUrl.browser_download_url);
+                }
+            }
         });
     }
+}
+
+function addAppleSiliconDownloadOption(el, url) {
+    var wrapper = document.createElement('div');
+    el.parentElement.insertBefore(wrapper, el.nextSibling);
+    wrapper.classList.add('download-extras');
+
+    var link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.classList.add('btn', 'btn-extra', 'btn-download');
+    wrapper.appendChild(link);
+
+    var linkText = document.createElement('div');
+    linkText.classList.add('btn-text');
+    linkText.innerText = 'Apple Silicon Mac? Click here';
+    link.appendChild(linkText);
 }
 
 function rotateScreenshot(next) {
