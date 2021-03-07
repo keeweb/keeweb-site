@@ -90,14 +90,15 @@
             document.querySelector('form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 document.querySelector('#result').innerText =
-                    'Values that would be submitted: \n\n' + isOTP
+                    'Values that would be submitted: \n\n' +
+                    (isOTP
                         ? 'OTP: ' + document.querySelector('#username').value
                         : 'Username: ' +
                           document.querySelector('#username').value +
                           '\n' +
                           'Password: ' +
                           document.querySelector('#password').value +
-                          '\n';
+                          '\n');
 
                 document.querySelector('form').reset();
                 document.querySelector('#username').focus();
