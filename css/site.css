@@ -239,6 +239,43 @@ hr {
     }
 }
 
+.links-row {
+    border-bottom: 1px solid #e3e3e3;
+    padding: 2em 0;
+}
+.links {
+    display: inline-block;
+    text-align: left;
+    width: calc(800px + 6em);
+    margin: 0;
+}
+.links>h2 {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+}
+.link {
+    margin: 1em 0;
+}
+.link-desc {
+    color: #ccc;
+    margin: 1em;
+}
+@media only screen and (max-width: 950px) {
+    .links {
+        width: 80vw;
+    }
+}
+@media only screen and (max-width: 510px) {
+    .links-row {
+        text-align: left;
+    }
+    .links {
+        width: 80vw;
+        margin: .5em 1em;
+    }
+}
+
 .text-block>p {
     margin: 0 auto;
     padding: 0 1em 1em;
