@@ -24,13 +24,13 @@ on:
       DIRECTORY_BUILD_OUTPUT:
         description:  "Build Output Dir"
         required:     true
-        default:      '/'
+        default:      './'
         type:         string
 
       DIRECTORY_ROOT:
         description:  "Root Dir"
         required:     true
-        default:      '/'
+        default:      './'
         type:         string
 
       WRANGLER_VERSION:
@@ -40,10 +40,10 @@ on:
         type:         string
 
       BRANCH:
-        description: 'Website Branch'
-        required: true
-        default: 'master'
-        type: choice
+        description:  'Website Branch'
+        required:     true
+        default:      'master'
+        type:         choice
         options:
         - master
         - main
@@ -60,7 +60,9 @@ jobs:
           ☁️ Publish KeeWeb.info
         runs-on: ubuntu-latest
         permissions:
-          contents: read
+            contents: read
+            deployments: write
+            id-token: write
         steps:
 
           - name: "✅ Start"
@@ -79,6 +81,51 @@ jobs:
               fetch-depth: 0
 
           # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > NODE > SETUP
+          # ---------------------------------------------------------------------------------------
+
+          - name: "⚙️ Setup › Node"
+            id: task_cfpublish_node_setup
+            uses: actions/setup-node@v4
+            with:
+              node-version: '20.x'
+              scope: '@aetherinox'
+
+          # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > NODE > INSTALL
+          # ---------------------------------------------------------------------------------------
+
+          - name: "📦 NPM › Install Wrangler"
+            id: task_cloudflare_npm_install
+            run: |
+              npm install -g npm@latest
+              npm install --global wrangler
+            env:
+              NODE_AUTH_TOKEN: ${{ secrets.SELF_TOKEN_CL }}
+
+          # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > CHECK PROJECT
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☁️ CF › Check Project"
+            shell: bash
+            id: check-project
+            run: |
+              check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME }}" \
+                -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+                -H "Content-Type:application/json" | jq -r '.success')
+              echo "result=$check" >> $GITHUB_OUTPUT
+
+          - name: "☁️ CF › Create Project (if nonexistent)"
+            shell: bash
+            if: steps.check-project.outputs.result != 'true'
+            run: |
+              curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
+                -H "Authorization: Bearer ${{ secrets.CF_ACCOUNT_ID }}" \
+                -H "Content-Type:application/json" \
+                --data '{"name":"${{ inputs.PROJECT_NAME }}", "production_branch":"${{ inputs.BRANCH }}"}'
+
+          # ---------------------------------------------------------------------------------------
           #   Job > Publish > Checkout
           # ---------------------------------------------------------------------------------------
 
@@ -89,7 +136,7 @@ jobs:
               accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
               projectName: ${{ inputs.PROJECT_NAME }}                             # Project name assigned at creation. view on workers-and-pages section of CF website
               directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT }}                     # Output directory for built website
-              gitHubToken: ${{ secrets.GITHUB_TOKEN }}                            # Optional: Enable this if you want to have GitHub Deployments triggered
+              gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                           # Optional: Enable this if you want to have GitHub Deployments triggered
               branch: ${{ inputs.BRANCH }}                                        # Branch website published to; by default this will be the branch which triggered this workflow
               workingDirectory: ${{ inputs.DIRECTORY_ROOT }}                      # Working directory
               wranglerVersion: ${{ inputs.WRANGLER_VERSION }}                     # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
