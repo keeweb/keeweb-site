@@ -87,7 +87,7 @@ jobs:
             with:
               apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
               accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
-              projectName: ${{ inputs.PROJECT_NAME }} project                     # Project name assigned at creation. view on workers-and-pages section of CF website
+              projectName: ${{ inputs.PROJECT_NAME }}                             # Project name assigned at creation. view on workers-and-pages section of CF website
               directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT }}                     # Output directory for built website
               gitHubToken: ${{ secrets.GITHUB_TOKEN }}                            # Optional: Enable this if you want to have GitHub Deployments triggered
               branch: ${{ inputs.BRANCH }}                                        # Branch website published to; by default this will be the branch which triggered this workflow
