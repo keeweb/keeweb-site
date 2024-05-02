@@ -131,20 +131,36 @@ jobs:
                 --data '{"name":"${{ inputs.PROJECT_NAME || 'keeweb-site' }}", "production_branch":"${{ inputs.BRANCH || 'master' }}"}'
 
           # ---------------------------------------------------------------------------------------
-          #   Job > Publish > Checkout
+          #   Job > Publish > Cloudflare Wrangler
           # ---------------------------------------------------------------------------------------
 
           - name: "☁️ CF › Publish KeeWeb.info"
-            uses: cloudflare/pages-action@v1
+            uses: cloudflare/wrangler-action@v3
             with:
               apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
               accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
-              projectName: ${{ inputs.PROJECT_NAME || 'keeweb-site' }}            # Project name assigned at creation. view on workers-and-pages section of CF website
-              directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }}             # Output directory for built website
-              gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                           # Optional: Enable this if you want to have GitHub Deployments triggered
-              branch: ${{ inputs.BRANCH || 'master' }}                            # Branch website published to; by default this will be the branch which triggered this workflow
               workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
-              wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}              # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
+              command: pages deploy ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }} --project-name=${{ inputs.PROJECT_NAME || 'keeweb-site' }} --commit-dirty=true
+
+          # ---------------------------------------------------------------------------------------
+          #   Cloudflare Pages Action
+          #
+          #   a new version has been supplied above to switch from
+          #   cloudflare/pages-action@v1 -> cloudflare/wrangler-action@v3
+          #   the new action uses NodeJS 20, instead of 16.
+          # ---------------------------------------------------------------------------------------
+
+          # - name: "☁️ CF › Publish KeeWeb.info"
+          #  uses: cloudflare/pages-action@v1
+          #  with:
+          #    apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
+          #    accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
+          #    projectName: ${{ inputs.PROJECT_NAME || 'keeweb-site' }}            # Project name assigned at creation. view on workers-and-pages section of CF website
+          #    directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }}             # Output directory for built website
+          #    gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                           # Optional: Enable this if you want to have GitHub Deployments triggered
+          #    branch: ${{ inputs.BRANCH || 'master' }}                            # Branch website published to; by default this will be the branch which triggered this workflow
+          #    workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
+          #    wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}              # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
 
     # ---------------------------------------------------------------------------------------
     #   JOB > COMPLETE
