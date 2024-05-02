@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------
 
 run-name: "☁️ CF Pages › Deploy Keeweb.info"
-name: "☁️ CF Pages › Keeweb.info"
+name: "☁️ Pages › CF › Keeweb.info"
 
 on:
   workflow_dispatch:
