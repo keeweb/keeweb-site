@@ -1,12 +1,17 @@
 # ---------------------------------------------------------------------------------------
 #   Cloudflare Pages › Update keeweb.info Website
 #   Pushes a new version of the Keeweb.info website to Cloudflare
+#
+#   site available at:
+#     - keeweb-site.pages.dev
 # ---------------------------------------------------------------------------------------
 
 run-name: "☁️ CF › Deploy › KeeWeb.info"
 name: "☁️ CF › KeeWeb.info"
 
 on:
+  push:
+    branches: [ master ]
   workflow_dispatch:
     inputs:
 
