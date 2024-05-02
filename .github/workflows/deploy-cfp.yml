@@ -1,10 +1,10 @@
 # ---------------------------------------------------------------------------------------
-#   Cloudflare Pages › Update Website keeweb.info
+#   Cloudflare Pages › Update keeweb.info Website
 #   Pushes a new version of the Keeweb.info website to Cloudflare
 # ---------------------------------------------------------------------------------------
 
-run-name: "☁️ CF Pages › Deploy Keeweb.info"
-name: "☁️ Pages › CF › Keeweb.info"
+run-name: "☁️ CF › Deploy › KeeWeb.info"
+name: "☁️ CF › KeeWeb.info"
 
 on:
   workflow_dispatch:
