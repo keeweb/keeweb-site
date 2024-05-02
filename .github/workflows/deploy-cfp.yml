@@ -70,7 +70,7 @@ jobs:
             id-token: write
         steps:
 
-          - name: "✅ Start"
+          - name: "✅ Start Publish"
             id: task_cfpublish_start
             run: |
               echo "Publishing new version of KeeWeb.info to Cloudflare Pages service"
@@ -116,7 +116,7 @@ jobs:
             shell: bash
             id: check-project
             run: |
-              check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME }}" \
+              check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME || 'keeweb-site' }}" \
                 -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
                 -H "Content-Type:application/json" | jq -r '.success')
               echo "result=$check" >> $GITHUB_OUTPUT
@@ -128,7 +128,7 @@ jobs:
               curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
                 -H "Authorization: Bearer ${{ secrets.CF_ACCOUNT_ID }}" \
                 -H "Content-Type:application/json" \
-                --data '{"name":"${{ inputs.PROJECT_NAME }}", "production_branch":"${{ inputs.BRANCH }}"}'
+                --data '{"name":"${{ inputs.PROJECT_NAME || 'keeweb-site' }}", "production_branch":"${{ inputs.BRANCH || 'master' }}"}'
 
           # ---------------------------------------------------------------------------------------
           #   Job > Publish > Checkout
@@ -139,12 +139,12 @@ jobs:
             with:
               apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
               accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
-              projectName: ${{ inputs.PROJECT_NAME }}                             # Project name assigned at creation. view on workers-and-pages section of CF website
-              directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT }}                     # Output directory for built website
+              projectName: ${{ inputs.PROJECT_NAME || 'keeweb-site' }}            # Project name assigned at creation. view on workers-and-pages section of CF website
+              directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }}             # Output directory for built website
               gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                           # Optional: Enable this if you want to have GitHub Deployments triggered
-              branch: ${{ inputs.BRANCH }}                                        # Branch website published to; by default this will be the branch which triggered this workflow
-              workingDirectory: ${{ inputs.DIRECTORY_ROOT }}                      # Working directory
-              wranglerVersion: ${{ inputs.WRANGLER_VERSION }}                     # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
+              branch: ${{ inputs.BRANCH || 'master' }}                            # Branch website published to; by default this will be the branch which triggered this workflow
+              workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
+              wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}              # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
 
     # ---------------------------------------------------------------------------------------
     #   JOB > COMPLETE
