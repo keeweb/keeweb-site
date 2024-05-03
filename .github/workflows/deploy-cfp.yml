@@ -1,13 +1,25 @@
 # ---------------------------------------------------------------------------------------
-#   Cloudflare Pages › Update keeweb.info Website
-#   Pushes a new version of the Keeweb.info website to Cloudflare
+#   Cloudflare Pages › Update Website
+#   Pushes a new version of the website to Cloudflare
 #
-#   site available at:
-#     - keeweb-site.pages.dev
+#   If editing this workflow, all you need to edit are the INPUT values and the global
+#   ENV variables. No need to go any deeper.
+#
+#  CHANGE:
+#    - run-name && name
+#    - INPUTS:
+#        PROJECT_NAME
+#    - ENV:
+#        PROJECT_NAME
+#        DOMAIN
 # ---------------------------------------------------------------------------------------
 
 run-name: "☁️ CF › Deploy › KeeWeb.info"
 name: "☁️ CF › KeeWeb.info"
+
+# ---------------------------------------------------------------------------------------
+#   TRIGGERS
+# ---------------------------------------------------------------------------------------
 
 on:
   push:
@@ -54,6 +66,21 @@ on:
         - main
         - develop
 
+# ---------------------------------------------------------------------------------------
+#   ENV VARIABLES
+#
+#   PROJECT_NAME  : This is the project name used in Cloudflare.
+#   DOMAIN        : purely cosmetic which displays as the label of some steps
+# ---------------------------------------------------------------------------------------
+
+env:
+  PROJECT_NAME: ${{ github.event.inputs.PROJECT_NAME || 'keeweb-site' }}
+  DOMAIN: 'keeweb.info'
+
+# ---------------------------------------------------------------------------------------
+#   JOBS
+# ---------------------------------------------------------------------------------------
+
 jobs:
 
     # ---------------------------------------------------------------------------------------
@@ -62,8 +89,11 @@ jobs:
 
     job-cfpublish:
         name: >-
-          ☁️ Publish KeeWeb.info
+          ☁️ Publish Website
         runs-on: ubuntu-latest
+        outputs:
+          upload_github: ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS }}
+          upload_assets: ${{ steps.task_cloudflare_project_create_assets.outputs.SUCCESS }}
         permissions:
             contents: read
             deployments: write
@@ -73,7 +103,7 @@ jobs:
           - name: "✅ Start Publish"
             id: task_cfpublish_start
             run: |
-              echo "Publishing new version of KeeWeb.info to Cloudflare Pages service"
+              echo "Publishing new version of ${{ env.DOMAIN }} to Cloudflare Pages service"
 
           # ---------------------------------------------------------------------------------------
           #   Job > Publish > Checkout
@@ -110,37 +140,101 @@ jobs:
 
           # ---------------------------------------------------------------------------------------
           #   CLOUDFLARE > CHECK PROJECT
+          #
+          #   this step checks to see if your project already exists on cloudflare
           # ---------------------------------------------------------------------------------------
 
           - name: "☁️ CF › Check Project"
+            id: task_cloudflare_project_check
             shell: bash
-            id: check-project
             run: |
-              check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME || 'keeweb-site' }}" \
+              check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME || env.PROJECT_NAME }}" \
                 -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
                 -H "Content-Type:application/json" | jq -r '.success')
-              echo "result=$check" >> $GITHUB_OUTPUT
+              echo "SUCCESS=$check" >> $GITHUB_OUTPUT
 
-          - name: "☁️ CF › Create Project (if nonexistent)"
+          # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > CREATE PROJECT (LINKED TO GITHUB)
+          #
+          #   This step will only success if you've already linked your Github account to cloudflare.
+          #   if you attempt to push this deployment to any github repo that is not linked to 
+          #   cloudflare; the step will fail, and then execute step 
+          #   task_cloudflare_project_create_assets
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☁️ CF › Create Project › Linked Github (if nonexistent)"
+            id: task_cloudflare_project_create_github
             shell: bash
-            if: steps.check-project.outputs.result != 'true'
+            if: |
+              ${{ steps.task_cloudflare_project_check.outputs.SUCCESS != 'true' }}
             run: |
-              curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
-                -H "Authorization: Bearer ${{ secrets.CF_ACCOUNT_ID }}" \
+              check=$(curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
+                -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
                 -H "Content-Type:application/json" \
-                --data '{"name":"${{ inputs.PROJECT_NAME || 'keeweb-site' }}", "production_branch":"${{ inputs.BRANCH || 'master' }}"}'
+                -d '{"name": "${{ inputs.PROJECT_NAME || env.PROJECT_NAME }}", "production_branch": "${{ inputs.BRANCH || 'master' }}", "source": {"type": "github", "config": {"owner": "${{ github.repository_owner }}", "repo_name": "${{ github.event.repository.name }}"}}}' | jq -r '.success')
+              echo "SUCCESS=$check" >> $GITHUB_OUTPUT
+              echo "Mode (Link Github): $check"
+
+          # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > CREATE PROJECT
+          #
+          #   this step should execute only if the previous step failed.
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☁️ CF › Create Project › Upload Assets (if nonexistent)"
+            id: task_cloudflare_project_create_assets
+            shell: bash
+            if: |
+              steps.task_cloudflare_project_check.outputs.SUCCESS != 'true' && ( ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS == 'false' || failure()}} )
+            run: |
+              check=$(curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
+                -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+                -H "Content-Type:application/json" \
+                -d '{"name":"${{ inputs.PROJECT_NAME || env.PROJECT_NAME }}", "production_branch":"${{ inputs.BRANCH || 'master' }}"}' | jq -r '.success')
+              echo "SUCCESS=$check" >> $GITHUB_OUTPUT
+              echo "Mode (Upload Assets): $check"
+
+          # ---------------------------------------------------------------------------------------
+          #   CLOUDFLARE > CREATE > SUMMARY
+          #
+          #   outlines which method was used to create the project
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☁️ CF › Create Project › Summary"
+            id: task_cloudflare_project_summary
+            shell: bash
+            run: |
+              if [ ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS }} == 'true' ]; then
+                echo ""
+                echo "Project ${{ env.PROJECT_NAME }} linked to a Github account"
+                echo ""
+              elif [ ${{ steps.task_cloudflare_project_create_assets.outputs.SUCCESS }} == 'true' ]; then
+                echo "========================================================================="
+                echo ""
+                echo " Project ${{ env.PROJECT_NAME }} NOT linked to a Github account."
+                echo " Uploading assets to Cloudflare"
+                echo ""
+                echo "========================================================================="
+                echo "If you wish to sync the assets from Github to Cloudflare, you must ensure"
+                echo "you have connected your Github account to cloudflare and that you're"
+                echo "uploading from the same account that is linked."
+              else
+                echo ""
+                echo "Error occured creating ${{ env.PROJECT_NAME }}"
+                echo ""
+              fi
 
           # ---------------------------------------------------------------------------------------
           #   Job > Publish > Cloudflare Wrangler
           # ---------------------------------------------------------------------------------------
 
-          - name: "☁️ CF › Publish KeeWeb.info"
-            uses: cloudflare/wrangler-action@v3
-            with:
-              apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
-              accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
-              workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
-              command: pages deploy ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }} --project-name=${{ inputs.PROJECT_NAME || 'keeweb-site' }} --commit-dirty=true
+          #- name: "☁️ CF › Publish KeeWeb.info"
+          #  uses: cloudflare/wrangler-action@v3
+          #  with:
+          #    apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
+          #    accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
+          #    workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
+          #    command: pages deploy ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }} --project-name=${{ inputs.PROJECT_NAME || env.PROJECT_NAME }} --commit-dirty=true
 
           # ---------------------------------------------------------------------------------------
           #   Cloudflare Pages Action
@@ -150,18 +244,18 @@ jobs:
           #   the new action uses NodeJS 20, instead of 16.
           # ---------------------------------------------------------------------------------------
 
-          # - name: "☁️ CF › Publish KeeWeb.info"
-          #  uses: cloudflare/pages-action@v1
-          #  with:
-          #    apiToken: ${{ secrets.CF_TOKEN }}                                   # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
-          #    accountId: ${{ secrets.CF_ACCOUNT_ID }}                             # Cloudflare account ID available on right side of CF website
-          #    projectName: ${{ inputs.PROJECT_NAME || 'keeweb-site' }}            # Project name assigned at creation. view on workers-and-pages section of CF website
-          #    directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }}             # Output directory for built website
-          #    gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                           # Optional: Enable this if you want to have GitHub Deployments triggered
-          #    branch: ${{ inputs.BRANCH || 'master' }}                            # Branch website published to; by default this will be the branch which triggered this workflow
-          #    workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}              # Working directory
-          #    wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}              # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
-
+          - name: "☁️ CF › Publish ${{ env.DOMAIN }}"
+            uses: aetherinox/cloudflare-publish-action@latest
+            with:
+              apiToken: ${{ secrets.CF_TOKEN }}                                     # Cloudflare API Token at https://dash.cloudflare.com/profile/api-tokens
+              accountId: ${{ secrets.CF_ACCOUNT_ID }}                               # Cloudflare account ID available on right side of CF website
+              projectName: ${{ inputs.PROJECT_NAME || env.PROJECT_NAME }}           # Project name assigned at creation. view on workers-and-pages section of CF website
+              directory: ${{ inputs.DIRECTORY_BUILD_OUTPUT || './' }}               # Output directory for built website
+              gitHubToken: ${{ secrets.SELF_TOKEN_CL }}                             # Optional: Enable this if you want to have GitHub Deployments triggered
+              branch: ${{ inputs.BRANCH || 'master' }}                              # Branch website published to; by default this will be the branch which triggered this workflow
+              workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}                # Working directory
+              wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}                # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
+        
     # ---------------------------------------------------------------------------------------
     #   JOB > COMPLETE
     # ---------------------------------------------------------------------------------------
@@ -170,6 +264,9 @@ jobs:
         name: >-
           🆗 Successful Deployment
         needs: job-cfpublish
+        env:
+          UPLOAD_GITHUB: ${{ needs.job-cfpublish.outputs.upload_github }}
+          UPLOAD_ASSETS: ${{ needs.job-cfpublish.outputs.upload_assets }}
         runs-on: ubuntu-latest
         steps:
 
@@ -189,4 +286,19 @@ jobs:
           - name: "🆗 CF Pages Deployment: ${{ env.NOW }}"
             id: task_complete_summary
             run: |
-              echo "Successfully deployed cloudflare pages update @ ${{ env.NOW }}"
+              echo ""
+              echo ""
+              echo "========================================================================="
+              echo " Project ID: ............ ${{ env.PROJECT_NAME }}"
+              echo " Domain: ................ ${{ env.DOMAIN }}"
+              echo " Deploy Time: ........... ${{ env.NOW }}"
+              if [ ${{ env.UPLOAD_GITHUB }} == 'true' ]; then
+              echo " Link to Github:......... ✅"
+              echo " Link to Assets:......... ❌"
+              elif [ ${{ env.UPLOAD_ASSETS }} == 'true' ]; then
+              echo " Link to Github:......... ❌"
+              echo " Link to Assets:......... ✅"
+              else
+              echo " Link to Github:......... ❌"
+              echo " Link to Assets:......... ❌"
+              fi
