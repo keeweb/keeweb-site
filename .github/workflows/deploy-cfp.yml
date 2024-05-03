@@ -257,6 +257,20 @@ jobs:
               workingDirectory: ${{ inputs.DIRECTORY_ROOT || './' }}                # Working directory
               wranglerVersion: ${{ inputs.WRANGLER_VERSION || '3' }}                # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
         
+          # ---------------------------------------------------------------------------------------
+          #   Cloudflare > Purge Cache
+          # ---------------------------------------------------------------------------------------
+
+          - name: "☁️ CF › Purge Cache"
+            id: task_cloudflare_purge_cache
+            run: |
+              check=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_SITE_MAIN }}/purge_cache" \
+                -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+                -H "Content-Type:application/json" \
+                -d '{"purge_everything":true}' | jq -r '.success')
+              echo "SUCCESS=$check" >> $GITHUB_OUTPUT
+              echo "Purge Cache: $check"
+
     # ---------------------------------------------------------------------------------------
     #   JOB > COMPLETE
     # ---------------------------------------------------------------------------------------
