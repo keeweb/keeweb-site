@@ -80,10 +80,10 @@ on:
 env:
   PROJECT_NAME: ${{ github.event.inputs.PROJECT_NAME || 'main-keeweb-info' }}
   DOMAIN: 'main.keeweb.info'
-  DIR_BUILD_OUTPUT: ${{ github.event.inputs.DIRECTORY_BUILD_OUTPUT || 'main' }}
+  DIR_BUILD_OUTPUT: ${{ github.event.inputs.DIRECTORY_BUILD_OUTPUT || './' }}
   DIR_WORKING: ${{ github.event.inputs.DIRECTORY_WORKING || './' }}
   WRANGLER_VERSION: ${{ github.event.inputs.WRANGLER_VERSION || '2' }}
-  BRANCH: ${{ github.event.inputs.BRANCH || 'main' }}
+  BRANCH: ${{ github.event.inputs.BRANCH || 'master' }}
 
 # ---------------------------------------------------------------------------------------
 #   JOBS
