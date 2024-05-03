@@ -94,6 +94,7 @@ jobs:
         outputs:
           upload_github: ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS }}
           upload_assets: ${{ steps.task_cloudflare_project_create_assets.outputs.SUCCESS }}
+          existing_site: ${{ steps.task_cloudflare_project_check.outputs.EXISTING }}
         permissions:
             contents: read
             deployments: write
@@ -151,7 +152,7 @@ jobs:
               check=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/${{ inputs.PROJECT_NAME || env.PROJECT_NAME }}" \
                 -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
                 -H "Content-Type:application/json" | jq -r '.success')
-              echo "SUCCESS=$check" >> $GITHUB_OUTPUT
+              echo "EXISTING=$check" >> $GITHUB_OUTPUT
 
           # ---------------------------------------------------------------------------------------
           #   CLOUDFLARE > CREATE PROJECT (LINKED TO GITHUB)
@@ -166,7 +167,7 @@ jobs:
             id: task_cloudflare_project_create_github
             shell: bash
             if: |
-              ${{ steps.task_cloudflare_project_check.outputs.SUCCESS != 'true' }}
+              ${{ steps.task_cloudflare_project_check.outputs.EXISTING != 'true' }}
             run: |
               check=$(curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
                 -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
@@ -185,7 +186,7 @@ jobs:
             id: task_cloudflare_project_create_assets
             shell: bash
             if: |
-              steps.task_cloudflare_project_check.outputs.SUCCESS != 'true' && ( ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS == 'false' || failure()}} )
+              steps.task_cloudflare_project_check.outputs.EXISTING != 'true' && ( ${{ steps.task_cloudflare_project_create_github.outputs.SUCCESS == 'false' || failure()}} )
             run: |
               check=$(curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects" \
                 -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
@@ -267,6 +268,7 @@ jobs:
         env:
           UPLOAD_GITHUB: ${{ needs.job-cfpublish.outputs.upload_github }}
           UPLOAD_ASSETS: ${{ needs.job-cfpublish.outputs.upload_assets }}
+          EXISTING_SITE: ${{ needs.job-cfpublish.outputs.existing_site }}
         runs-on: ubuntu-latest
         steps:
 
@@ -292,13 +294,17 @@ jobs:
               echo " Project ID: ............ ${{ env.PROJECT_NAME }}"
               echo " Domain: ................ ${{ env.DOMAIN }}"
               echo " Deploy Time: ........... ${{ env.NOW }}"
-              if [ ${{ env.UPLOAD_GITHUB }} == 'true' ]; then
-              echo " Link to Github:......... ✅"
-              echo " Link to Assets:......... ❌"
-              elif [ ${{ env.UPLOAD_ASSETS }} == 'true' ]; then
-              echo " Link to Github:......... ❌"
-              echo " Link to Assets:......... ✅"
+              if [ ${{ env.EXISTING_SITE }} == 'true' ]; then
+                echo " Existing Site:.......... ✅"
               else
-              echo " Link to Github:......... ❌"
-              echo " Link to Assets:......... ❌"
+                if [ ${{ env.UPLOAD_GITHUB }} == 'true' ]; then
+                echo " Link to Github:......... ✅"
+                echo " Link to Assets:......... ❌"
+                elif [ ${{ env.UPLOAD_ASSETS }} == 'true' ]; then
+                echo " Link to Github:......... ❌"
+                echo " Link to Assets:......... ✅"
+                else
+                echo " Link to Github:......... ❌"
+                echo " Link to Assets:......... ❌"
+                fi
               fi
