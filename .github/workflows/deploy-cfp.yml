@@ -18,8 +18,8 @@
 #        BRANCH
 # ---------------------------------------------------------------------------------------
 
-run-name: "☁️ CF › Deploy › main.keeweb.info"
-name: "☁️ CF › main.keeweb.info"
+run-name: "☁️ CF › Deploy › keeweb.info"
+name: "☁️ CF › keeweb.info"
 
 # ---------------------------------------------------------------------------------------
 #   TRIGGERS
@@ -78,7 +78,7 @@ on:
 # ---------------------------------------------------------------------------------------
 
 env:
-  PROJECT_NAME: ${{ github.event.inputs.PROJECT_NAME || 'main-keeweb-info' }}
+  PROJECT_NAME: ${{ github.event.inputs.PROJECT_NAME || 'keeweb' }}
   DOMAIN: 'main.keeweb.info'
   DIR_BUILD_OUTPUT: ${{ github.event.inputs.DIRECTORY_BUILD_OUTPUT || './' }}
   DIR_WORKING: ${{ github.event.inputs.DIRECTORY_WORKING || './' }}
